@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<title>Petri.js</title>
+		<!--<link rel="shortcut icon" href="favicon.png"/>-->
+
+		<link rel="stylesheet" type="text/css" href="styles.css"/>
+		<link rel="stylesheet" type="text/css" href="gbuttons.css"/>
+
+		<script type="text/javascript" src="quadtree-js/quadtree.min.js"></script>
+		<script type="text/javascript" src="petri.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<meta name="description" content="Description here"/>
+		<meta name="keywords" content="tags,here,please" />
+	</head>
+	<body>
+		<canvas id="petri">
+		</canvas>
+		<form id="control">
+			<h2>Controls</h2>
+			<input type="button" class="button green" id="reset" value="Start"/>
+			<input type="button" class="button orange" id="clear" value="Clear"/>
+			<input type="button" class="button red" id="stop" value="Stop"/>
+			<input type="button" class="button blue" id="play" value="Play"/>
+			<br>
+			<label><input type="checkbox" id="chbg">Change background</label>
+
+		</form>
+		<script type="text/javascript">
+			var changeBG = document.getElementById("chbg");
+			document.getElementById("reset").onclick = function() {
+				petri.start("petri",window.width,window.height,changeBG.checked);
+			};
+			document.getElementById("stop").onclick = function() {petri.stop()};
+			document.getElementById("clear").onclick = function() {petri.clear()};
+			document.getElementById("play").onclick = function() {petri.play()};
+		</script>
+	</body>
+</html>
