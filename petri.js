@@ -205,5 +205,57 @@ var petri = (function() {
 		}
 	}
 
+
+
+	function Grid(width, height) {
+		this._init.apply(this, arguments);
+	}
+
+	Grid.prototype = {
+		_init: function(width, height) {
+			if(width <= 0 || height <= 0)
+				throw "Size units must be positive: (" + width + "," + height + ")";
+
+			this.width = width;
+			this.height = height;
+
+			this.columns = this.rows = 8;
+
+			this.grid = [];
+			for(var j = 0; j < this.columns; ++j) {
+				this.grid.push([]);
+			}
+		},
+
+		insert: function(point) {
+			var col = point.x / this.width * this.columns,
+			    row = point.y / this.height * this.rows;
+
+			var section = this.grid[row][col];
+			if(section.indexOf(point) < 0) {
+				section.push(point);
+			}
+		},
+
+		visible_points: function(point, radius) {
+			var visible = [];
+			var init_col = Math.max((point.x - radius) / this.width * this.columns, 0),
+			     end_col = Math.min((point.x + radius) / this.width * this.columns, this.columns - 1);
+			var init_row = Math.max((point.y - radius) / this.height * this.rows, 0),
+			     end_row = Math.min((point.y + radius) / this.height * this.rows, this.rows - 1);
+
+			for(var i = init_row; i < end_row; ++i) {
+				for(var j = init_col; i < end_col; ++j) {
+					this.grid[i][j].forEach(function(other) {
+						if(point.distance(other) <= radius) {
+							visible.push(other);
+						}
+					});
+				}
+			}
+			return visible;
+		}
+	}
+
 	return module;
 })();
