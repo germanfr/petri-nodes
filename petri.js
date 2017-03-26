@@ -70,12 +70,6 @@
 			canvas.arc(this.x, this.y, this.radius, 0, TWO_PI);
 			canvas.fill();
 
-			// canvas.beginPath();
-			// canvas.strokeStyle = 'rgba(255,0,0,1)';
-			// canvas.lineWidth = 0.5;
-			// canvas.arc(this.x, this.y, MAX_DISTANCE_UNION, 0, TWO_PI);
-			// canvas.stroke();
-
 			this._draw_unions();
 			this.painted = true;
 		},
@@ -92,8 +86,8 @@
 
 		_draw_union_with: function(other) {
 			let canvas = this.context;
-			let opacity = (1 - this.distance(other) / MAX_DISTANCE_UNION); // Max opacity is 0.75, min is 0
-			opacity *= opacity * 0.9;
+			let opacity = (1 - this.distance(other) / MAX_DISTANCE_UNION);
+			opacity *= opacity * 0.9; // Max opacity is 0.9, min is 0
 
 			canvas.beginPath();
 			canvas.strokeStyle = 'rgba(255,255,255,' + opacity + ')';
@@ -242,18 +236,18 @@
 			this.width = canvas.width;
 			this.height = canvas.height;
 
-			this.surface = new Grid(this.width, this.height);
-
 			if(params.dot_density) {
-				this.n_points = canvas.width * canvas.height * params.dot_density / 1000;
+				this.n_points = this.width * this.height * params.dot_density / 1000;
 			} else if(params.n_points) {
 				this.n_points = params.n_points;
 			} else {
-				this.n_points = canvas.width * canvas.height * 0.25 / 1000;
+				this.n_points = this.width * this.height * 0.25 / 1000;
 			}
 			this.n_points = Math.floor(this.n_points);
 
 			this.points = new Array(this.n_points);
+			this.surface = new Grid(this.width, this.height);
+
 			for(let i = 0; i < this.n_points; ++i) {
 				this.points[i] = new RandomDot(this.canvas);
 				this.surface.insert(this.points[i]);
@@ -309,12 +303,23 @@
 		draw: function() {
 			var point;
 
-			this.context.clearRect(0 , 0, this.canvas.width, this.canvas.height);
+			this.context.clearRect(0 , 0, this.width, this.height);
 			for(let i = 0; i < this.points.length; ++i) {
 				point = this.points[i];
 				point.draw();
 			}
 			this.cursor.draw();
+		},
+
+		resize: function(width, height) {
+			this.width = this.canvas.width = width;
+			this.height = this.canvas.height = height;
+
+			this.surface = new Grid(width, height);
+
+			for(let i = 0; i < this.n_points; ++i) {
+				this.surface.insert(this.points[i]);
+			}
 		}
 	}
 
