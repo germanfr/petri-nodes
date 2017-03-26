@@ -21,22 +21,20 @@
 		</canvas>
 		<form id="control">
 			<h2>Controls</h2>
-			<input type="button" class="button green" id="reset" value="Start"/>
-			<input type="button" class="button orange" id="clear" value="Clear"/>
 			<input type="button" class="button red" id="stop" value="Stop"/>
-			<input type="button" class="button blue" id="play" value="Play"/>
+			<input type="button" class="button blue" id="play" value="Play" autofocus/>
 			<br>
 			<label><input type="checkbox" id="chbg">Change background</label>
 
 		</form>
 		<script type="text/javascript">
-			var changeBG = document.getElementById("chbg");
-			document.getElementById("reset").onclick = function() {
-				petri.start("petri",window.width,window.height,changeBG.checked);
-			};
-			document.getElementById("stop").onclick = function() {petri.stop()};
-			document.getElementById("clear").onclick = function() {petri.clear()};
-			document.getElementById("play").onclick = function() {petri.play()};
+			var canvas = document.getElementById('petri');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			var my_petri = new petri.Petri(canvas, 128);
+			document.getElementById('stop').onclick = my_petri.stop.bind(my_petri);
+			document.getElementById('play').onclick = my_petri.start.bind(my_petri);
 		</script>
 	</body>
 </html>
