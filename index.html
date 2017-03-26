@@ -32,7 +32,9 @@
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
 
-			var my_petri = new petri.Petri(canvas, 128);
+			var my_petri = new petri.Petri(canvas, {
+				dot_density: 0.25
+			});
 			document.getElementById('stop').onclick = my_petri.stop.bind(my_petri);
 			document.getElementById('play').onclick = my_petri.start.bind(my_petri);
 		</script>

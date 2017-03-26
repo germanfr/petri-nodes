@@ -54,7 +54,6 @@ var petri = (function() {
 		return ((div % dsor) + dsor) % dsor;
 	}
 
-	const TWO_PI = 2 * Math.PI;
 
 	const DOT_MIN_RADIUS = 1;
 	const DOT_MAX_RADIUS = 2;
@@ -64,6 +63,7 @@ var petri = (function() {
 	const MAX_DISTANCE_UNION = 100;
 
 	const DRAW_DOT_COLOR = 'rgba(255,255,255,0.75)';
+	const TWO_PI = 2 * Math.PI;
 
 	function Dot(canvas, x, y, radius) {
 		this._init(canvas, x, y, radius);
@@ -264,12 +264,12 @@ var petri = (function() {
 		}
 	}
 
-	function Petri(canvas, n_points) {
-		this._init(canvas, n_points);
+	function Petri(canvas, params) {
+		this._init(canvas, params);
 	}
 
 	Petri.prototype = {
-		_init: function(canvas, n_points) {
+		_init: function(canvas, params) {
 			this.canvas = canvas;
 			this.context = canvas.getContext('2d');
 			this.width = canvas.width;
@@ -277,8 +277,17 @@ var petri = (function() {
 
 			this.surface = new Grid(this.width, this.height);
 
-			this.points = new Array(n_points);
-			for(let i = 0; i < n_points; ++i) {
+			if(params.dot_density) {
+				this.n_points = canvas.width * canvas.height * params.dot_density / 1000;
+			} else if(params.n_points) {
+				this.n_points = params.n_points;
+			} else {
+				this.n_points = canvas.width * canvas.height * 0.25 / 1000;
+			}
+			this.n_points = Math.floor(this.n_points);
+
+			this.points = new Array(this.n_points);
+			for(let i = 0; i < this.n_points; ++i) {
 				this.points[i] = new RandomDot(this.canvas);
 				this.surface.insert(this.points[i]);
 			}
