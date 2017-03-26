@@ -1,0 +1,15 @@
+{
+  "name": "petri-nodes",
+  "version": "0.1.0",
+  "description": "Some nodes and lines moving around on a canvas",
+  "main": "petri.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/germanfr/petri-nodes.git"
+  },
+  "author": "Germán Franco <dev.germanfr@gmail.com>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/germanfr/petri-nodes/issues"
+  }
+}

@@ -1,39 +1,6 @@
-var petri = (function() {
-	var module = {};
+(function() {
 
-
-	var dotDensity = 2.5;
-
-
-	function resizeCanvas(canvas) {
-		canvas.height = canvas.height;
-		canvas.width = canvas.width;
-	}
-
-
-	function setBackground(elem) {
-		var colors = ["336699","20C29A","8C20C2","0E193D"];
-		//var colors = ["0E193D", "011123"]
-		if(colors.length > 1) {
-			var n = random(0,colors.length-1);
-			var m = (n + random(1,colors.length-2)) % colors.length;
-			setBackgroundGradient(elem, colors[n], colors[m], random(60,120));
-		}
-		colors = null;
-	}
-
-
-	/**
-	* Establece un degradado como color de fondo de un elemento DOM
-	* @param elemento objeto al que se aplica el color de fondo
-	* @param hex1 Color 1 en hexadecimal (sin #)
-	* @param hex2 Color 2 en hexadecimal (sin #)
-	* @param degrees Inclinación del degradado
-	*/
-	function setBackgroundGradient(elem, hex1, hex2, degrees) {
-		elem.style.backgroundImage = "linear-gradient(" + degrees + "deg, #" + hex1 + ", #" + hex2 + ")";
-	}
-
+	module.exports = {};
 
 	/**
 	* Returns a random number between A and B, both included.
@@ -351,7 +318,5 @@ var petri = (function() {
 		}
 	}
 
-	module.Petri = Petri;
-
-	return module;
+	module.exports.Petri = Petri;
 })();
