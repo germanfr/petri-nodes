@@ -58,8 +58,8 @@
 		},
 
 		step: function(dt) {
-			this.x = round_mod(this.x + this.vx * dt, canvas.width);
-			this.y = round_mod(this.y + this.vy * dt, canvas.height);
+			this.x = round_mod(this.x + this.vx * dt, this.canvas.width);
+			this.y = round_mod(this.y + this.vy * dt, this.canvas.height);
 			this.painted = false;
 		},
 
