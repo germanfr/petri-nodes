@@ -163,6 +163,31 @@ var petri = (function() {
 		},
 	}
 
+	function CursorDot(canvas) {
+		this._init(canvas);
+	}
+
+	CursorDot.prototype = {
+		__proto__: Dot.prototype,
+
+		_init: function(canvas) {
+			Dot.prototype._init.call(this, canvas, 0, 0, 0);
+
+			window.addEventListener('mousemove', this);
+		},
+
+		handleEvent: function(event) {
+			this.x = event.clientX;
+			this.y = event.clientY;
+		},
+
+		draw: function () {
+			for(let i = 0; i < this.adjacents.length; ++i) {
+				this._draw_union_with(this.adjacents[i]);
+			}
+		}
+	}
+
 	function Grid(width, height) {
 		this._init.apply(this, arguments);
 	}
@@ -257,6 +282,7 @@ var petri = (function() {
 				this.points[i] = new RandomDot(this.canvas);
 				this.surface.insert(this.points[i]);
 			}
+			this.cursor = new CursorDot(this.canvas);
 		},
 
 		_update_graph: function () {
@@ -265,6 +291,7 @@ var petri = (function() {
 				point = this.points[i];
 				point.adjacents = this.surface.visible_points(point, MAX_DISTANCE_UNION);
 			}
+			this.cursor.adjacents = this.surface.visible_points(this.cursor, MAX_DISTANCE_UNION);
 		},
 
 		start: function() {
@@ -311,6 +338,7 @@ var petri = (function() {
 				point = this.points[i];
 				point.draw();
 			}
+			this.cursor.draw();
 		}
 	}
 
