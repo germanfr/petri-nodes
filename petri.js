@@ -18,7 +18,7 @@
 	* @param {number} dsor - Divisor
 	*/
 	function round_mod(div, dsor) {
-		return ((div % dsor) + dsor) % dsor;
+		return (div % dsor + dsor) % dsor;
 	}
 
 
@@ -31,6 +31,7 @@
 
 	const DRAW_DOT_COLOR = 'rgba(255,255,255,0.75)';
 	const TWO_PI = 2 * Math.PI;
+	const MIN_REFRESH_INTERVAL = 0.02; // (seconds) ~60FPS (little bit less)
 
 	function Dot(canvas, x, y, radius) {
 		this._init(canvas, x, y, radius);
@@ -278,10 +279,13 @@
 
 		_step_frame: function(current_time) {
 			let time_diff = (current_time - this.time) / 1000;
-			this.step(time_diff);
-			this.draw();
 
-			this.time = current_time;
+			if(time_diff >= MIN_REFRESH_INTERVAL) {
+				this.step(time_diff);
+				this.draw();
+
+				this.time = current_time;
+			}
 
 			if(this.run) {
 				window.requestAnimationFrame(this._step_frame.bind(this));
