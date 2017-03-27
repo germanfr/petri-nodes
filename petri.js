@@ -312,14 +312,25 @@
 		},
 
 		resize: function(width, height) {
+			var point;
+			let running = this.run;
+
+			this.stop();
+
 			this.width = this.canvas.width = width;
 			this.height = this.canvas.height = height;
 
 			this.surface = new Grid(width, height);
 
 			for(let i = 0; i < this.n_points; ++i) {
-				this.surface.insert(this.points[i]);
+				point = this.points[i];
+				point.x = round_mod(point.x, width);
+				point.y = round_mod(point.y, height);
+				this.surface.insert(point);
 			}
+
+			if(running)
+				this.start();
 		}
 	}
 
