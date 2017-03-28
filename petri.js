@@ -239,6 +239,8 @@
 			this.width = canvas.width;
 			this.height = canvas.height;
 
+			this.run = false;
+
 			if(params.dot_density) {
 				this.n_points = this.width * this.height * params.dot_density / 1000;
 			} else if(params.n_points) {
@@ -318,25 +320,16 @@
 		},
 
 		resize: function(width, height) {
-			var point;
-			let running = this.run;
+			let width_proportion = width / this.width;
+			let height_proportion = height / this.height;
 
-			this.stop();
+			this.surface.width = this.width = this.canvas.width = width;
+			this.surface.height = this.height = this.canvas.height = height;
 
-			this.width = this.canvas.width = width;
-			this.height = this.canvas.height = height;
-
-			this.surface = new Grid(width, height);
-
-			for(let i = 0; i < this.n_points; ++i) {
-				point = this.points[i];
-				point.x = round_mod(point.x, width);
-				point.y = round_mod(point.y, height);
-				this.surface.insert(point);
-			}
-
-			if(running)
-				this.start();
+			this.points.forEach(function(point) {
+				point.x = point.x * width_proportion;
+				point.y = point.y * height_proportion;
+			}.bind(this));
 		}
 	}
 
