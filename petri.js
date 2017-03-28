@@ -147,7 +147,9 @@
 			for(let i = 0; i < this.adjacents.length; ++i) {
 				this._draw_union_with(this.adjacents[i]);
 			}
-		}
+		},
+
+		step: function() {}
 	}
 
 	function Grid(width, height) {
@@ -253,7 +255,9 @@
 				this.points[i] = new RandomDot(this.canvas);
 				this.surface.insert(this.points[i]);
 			}
-			this.cursor = new CursorDot(this.canvas);
+
+			if(params.with_cursor)
+				this.points[0] = new CursorDot(this.canvas);
 		},
 
 		_update_graph: function () {
@@ -262,7 +266,6 @@
 				point = this.points[i];
 				point.adjacents = this.surface.visible_points(point, MAX_DISTANCE_UNION);
 			}
-			this.cursor.adjacents = this.surface.visible_points(this.cursor, MAX_DISTANCE_UNION);
 		},
 
 		start: function() {
@@ -312,7 +315,6 @@
 				point = this.points[i];
 				point.draw();
 			}
-			this.cursor.draw();
 		},
 
 		resize: function(width, height) {
