@@ -280,10 +280,14 @@
 		},
 
 		stop: function (callback) {
-			this.run = false;
-
-			if(typeof callback === 'function')
-				this._on_stop_callbacks.push(callback);
+			if(this.run) {
+				if(typeof callback === 'function')
+					this._on_stop_callbacks.push(callback);
+				this.run = false;
+			} else {
+				if(typeof callback === 'function')
+					callback();
+			}
 		},
 
 		_stopped: function() {
@@ -334,6 +338,8 @@
 		},
 
 		resize: function(width, height) {
+			let was_running = this.run;
+
 			let width_proportion = width / this.width;
 			let height_proportion = height / this.height;
 
@@ -345,9 +351,11 @@
 					point.y = point.y * height_proportion;
 				});
 
-				this.start();
+				if(was_running)
+					this.start();
 			});
 		}
+
 	}
 
 	module.exports.Petri = Petri;
