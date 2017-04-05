@@ -1,0 +1,16 @@
+{
+  "name": "petri-example",
+  "version": "0.0.0",
+  "description": "A working example of petri",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Germán Franco <dev.germanfr@gmail.com>",
+  "license": "GPL-3.0",
+  "dependencies": {},
+  "devDependencies": {
+    "petri-nodes": "git+https://github.com/germanfr/petri-nodes.git"
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0"
+  }
+}

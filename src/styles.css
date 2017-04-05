@@ -1,0 +1,89 @@
+* {
+	margin: 0;
+	padding: 0;
+	outline: none;
+}
+html, body {
+	height: 100%;
+	min-height: 100%;
+	position:relative;
+	font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+	font-size: 14px;
+	background-color: #111;
+	color: #F6F6F6;
+}
+
+a, a:link, a:visited {
+	color: #5294E2;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+/* Canvas */
+#petri {
+	display:block;
+}
+
+/* Controls overlay */
+#overlay {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 1000;
+	text-align: right;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+#control {
+	position: absolute;
+	right: 0;
+	left: 0;
+	bottom: 16px;
+	width: 256px;
+	padding: 16px;
+	margin: auto;
+
+	background-color: rgba(0,0,0,0.5);
+	border: 1px solid #000000;
+	color: #F6F6F6;
+	border-radius: 4px;
+	text-align: center;
+}
+
+#control h3 {
+	margin: 4px 4px 8px;
+}
+
+#overlay > * {
+	vertical-align: bottom;
+}
+
+.button {
+	background-color: rgba(255,255,255,.2);
+	border: 1px solid #000000;
+
+	color: #F6F6F6;
+	text-align: center;
+
+	border-radius: 2px;
+
+	padding: 6px 12px;
+	margin: 4px;
+	cursor: pointer;
+}
+
+.button:focus {
+	box-shadow: 0 0 0 2px rgba(127,127,127,0.2);
+}
+
+.button:hover {
+	box-shadow: 0 0 0 2px rgba(127,127,127,0.4);
+}
+
+.button::-moz-focus-inner {
+  border: 0;
+}
