@@ -240,6 +240,7 @@
 			this.height = canvas.height;
 
 			this.run = false;
+			this._on_stop_callbacks = [];
 
 			if(params.dot_density) {
 				this.n_points = this.width * this.height * params.dot_density / 1000;
@@ -278,8 +279,19 @@
 			window.requestAnimationFrame(this._step_frame.bind(this));
 		},
 
-		stop: function () {
+		stop: function (callback) {
 			this.run = false;
+
+			if(typeof callback === 'function')
+				this._on_stop_callbacks.push(callback);
+		},
+
+		_stopped: function() {
+			let callback;
+			while(this._on_stop_callbacks.length !== 0) {
+				callback = this._on_stop_callbacks.pop();
+				callback();
+			}
 		},
 
 		_step_frame: function(current_time) {
@@ -294,6 +306,8 @@
 
 			if(this.run) {
 				window.requestAnimationFrame(this._step_frame.bind(this));
+			} else {
+				this._stopped();
 			}
 		},
 
@@ -323,13 +337,16 @@
 			let width_proportion = width / this.width;
 			let height_proportion = height / this.height;
 
-			this.surface.width = this.width = this.canvas.width = width;
-			this.surface.height = this.height = this.canvas.height = height;
+			this.stop(() => {
+				this.surface.width = this.width = this.canvas.width = width;
+				this.surface.height = this.height = this.canvas.height = height;
+				this.points.forEach(function(point) {
+					point.x = point.x * width_proportion;
+					point.y = point.y * height_proportion;
+				});
 
-			this.points.forEach(function(point) {
-				point.x = point.x * width_proportion;
-				point.y = point.y * height_proportion;
-			}.bind(this));
+				this.start();
+			});
 		}
 	}
 
