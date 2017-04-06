@@ -1,8 +1,8 @@
 const Petri = require('petri-nodes');
 
 var canvas = document.getElementById('petri');
-canvas.width = canvas.parentElement.clientWidth;
-canvas.height = canvas.parentElement.clientHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 var my_petri = new Petri.Petri(canvas, {
 	dot_density: 0.4,
