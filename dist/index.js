@@ -189,7 +189,8 @@ window.addEventListener('resize', function () {
 			this.width = width;
 			this.height = height;
 
-			this.columns = this.rows = 6;
+			this.rows = 4 * Math.floor(height / MAX_DISTANCE_UNION);
+			this.columns = 4 * Math.floor(width / MAX_DISTANCE_UNION);
 
 			this.grid = new Array(this.rows);
 			for(let i = 0; i < this.rows; ++i) {
