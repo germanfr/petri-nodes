@@ -9,7 +9,7 @@
   "license": "GPL-3.0",
   "dependencies": {},
   "devDependencies": {
-    "petri-nodes": "git+https://github.com/germanfr/petri-nodes.git"
+    "petri-nodes": "git+https://github.com/germanfr/petri-nodes.git",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0"
   }
