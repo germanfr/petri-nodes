@@ -139,8 +139,8 @@
 		},
 
 		handleEvent: function(event) {
-			this.x = event.clientX;
-			this.y = event.clientY;
+			this.x = event.clientX + window.scrollX;
+			this.y = event.clientY + window.scrollY;
 		},
 
 		draw: function () {
