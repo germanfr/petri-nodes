@@ -135,7 +135,7 @@
 		_init: function(canvas) {
 			Dot.prototype._init.call(this, canvas, 0, 0, 0);
 
-			window.addEventListener('mousemove', this);
+			canvas.addEventListener('mousemove', this);
 		},
 
 		handleEvent: function(event) {
