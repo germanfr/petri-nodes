@@ -11,16 +11,6 @@
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
 
-	/**
-	* Round module including negative numbers.
-	* Example: -1 % 4 === 3
-	* @param {number} div - Dividend
-	* @param {number} dsor - Divisor
-	*/
-	function round_mod(div, dsor) {
-		return (div % dsor + dsor) % dsor;
-	}
-
 
 	const DOT_MIN_RADIUS = 1;
 	const DOT_MAX_RADIUS = 2;
@@ -59,8 +49,23 @@
 		},
 
 		step: function(dt) {
-			this.x = round_mod(this.x + this.vx * dt, this.canvas.width);
-			this.y = round_mod(this.y + this.vy * dt, this.canvas.height);
+			this.x += this.vx * dt;
+			this.y += this.vy * dt;
+
+			if(this.x < 0) {
+				this.x = -this.x;
+				this.vx = -this.vx;
+			} else if(this.x >= this.canvas.width) {
+				this.x = this.canvas.width - (this.x - this.canvas.width) - 1;
+				this.vx = -this.vx;
+			}
+			if(this.y < 0) {
+				this.y = -this.y;
+				this.vy = -this.vy;
+			} else if(this.y >= this.canvas.height) {
+				this.y = this.canvas.height - (this.y - this.canvas.height) - 1;
+				this.vy = -this.vy;
+			}
 			this.painted = false;
 		},
 
