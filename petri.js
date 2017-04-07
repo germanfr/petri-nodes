@@ -141,6 +141,16 @@
 		handleEvent: function(event) {
 			this.x = event.clientX + window.scrollX;
 			this.y = event.clientY + window.scrollY;
+
+			if(this.x < 0)
+				this.x = 0;
+			else if(this.x >= this.canvas.width)
+				this.x = this.canvas.width - 1;
+
+			if(this.y < 0)
+				this.y = 0;
+			else if(this.y >= this.canvas.height)
+				this.y = this.canvas.height - 1;
 		},
 
 		draw: function () {
