@@ -33,12 +33,12 @@
 	const TWO_PI = 2 * Math.PI;
 	const MIN_REFRESH_INTERVAL = 0.02; // (seconds) ~60FPS (little bit less)
 
-	function Dot(canvas, x, y, radius) {
-		this._init(canvas, x, y, radius);
+	function Dot(canvas, viewport, x, y, radius) {
+		this._init(canvas, viewport, x, y, radius);
 	}
 
 	Dot.prototype = {
-		_init: function(canvas, x, y, radius) {
+		_init: function(canvas, viewport, x, y, radius) {
 			this.canvas = canvas;
 			this.context = canvas.getContext('2d');
 
@@ -47,6 +47,8 @@
 			this.radius = radius;
 			this.vx = 0;
 			this.vy = 0;
+
+			this.viewport = viewport;
 
 			this.adjacents = [];
 			this.painted = false;
@@ -59,8 +61,8 @@
 		},
 
 		step: function(dt) {
-			this.x = round_mod(this.x + this.vx * dt, this.canvas.width);
-			this.y = round_mod(this.y + this.vy * dt, this.canvas.height);
+			this.x = round_mod(this.x + this.vx * dt - this.viewport.x, this.viewport.width) + this.viewport.x;
+			this.y = round_mod(this.y + this.vy * dt - this.viewport.y, this.viewport.height) + this.viewport.y;
 			this.painted = false;
 		},
 
@@ -99,18 +101,18 @@
 		}
 	}
 
-	function RandomDot(canvas) {
-		this._init(canvas);
+	function RandomDot(canvas, viewport) {
+		this._init(canvas, viewport);
 	}
 
 	RandomDot.prototype = {
 		__proto__: Dot.prototype,
 
-		_init: function(canvas) {
-			let pos_x = Math.random() * canvas.width;
-			let pos_y = Math.random() * canvas.height;
+		_init: function(canvas, viewport) {
+			let x = random(viewport.x, viewport.x + viewport.width - 1);
+			let y = random(viewport.y, viewport.y + viewport.height - 1);
 			let radius = random(DOT_MIN_RADIUS, DOT_MAX_RADIUS);
-			Dot.prototype._init.call(this, canvas, pos_x, pos_y, radius);
+			Dot.prototype._init.call(this, canvas, viewport, x, y, radius);
 
 			this._init_movement();
 		},
@@ -125,15 +127,15 @@
 		},
 	}
 
-	function CursorDot(canvas) {
-		this._init(canvas);
+	function CursorDot(canvas, viewport) {
+		this._init(canvas, viewport);
 	}
 
 	CursorDot.prototype = {
 		__proto__: Dot.prototype,
 
-		_init: function(canvas) {
-			Dot.prototype._init.call(this, canvas, 0, 0, 0);
+		_init: function(canvas, viewport) {
+			Dot.prototype._init.call(this, canvas, viewport, viewport.x, viewport.y, 0);
 
 			canvas.addEventListener('mousemove', this);
 		},
@@ -142,15 +144,15 @@
 			this.x = event.clientX + window.scrollX;
 			this.y = event.clientY + window.scrollY;
 
-			if(this.x < 0)
+			if(this.x < this.viewport.x)
 				this.x = 0;
-			else if(this.x >= this.canvas.width)
-				this.x = this.canvas.width - 1;
+			else if(this.x >= this.viewport.x + this.viewport.width)
+				this.x = this.viewport.x + this.viewport.width - 1;
 
-			if(this.y < 0)
+			if(this.y < this.viewport.y)
 				this.y = 0;
-			else if(this.y >= this.canvas.height)
-				this.y = this.canvas.height - 1;
+			else if(this.y >= this.viewport.height + this.viewport.y)
+				this.y = this.viewport.y + this.viewport.height - 1;
 		},
 
 		draw: function () {
@@ -162,20 +164,16 @@
 		step: function() {}
 	}
 
-	function Grid(width, height) {
+	function Grid(viewport) {
 		this._init.apply(this, arguments);
 	}
 
 	Grid.prototype = {
-		_init: function(width, height) {
-			if(width <= 0 || height <= 0)
-				throw "Size units must be positive: (" + width + "," + height + ")";
+		_init: function(viewport) {
+			this.viewport = viewport;
 
-			this.width = width;
-			this.height = height;
-
-			this.rows = 4 * Math.floor(height / MAX_DISTANCE_UNION);
-			this.columns = 4 * Math.floor(width / MAX_DISTANCE_UNION);
+			this.rows = 3 * Math.floor(viewport.height / MAX_DISTANCE_UNION);
+			this.columns = 3 * Math.floor(viewport.width / MAX_DISTANCE_UNION);
 
 			this.grid = new Array(this.rows);
 			for(let i = 0; i < this.rows; ++i) {
@@ -197,9 +195,7 @@
 			let old_section = this.get_section(old_x, old_y);
 			let pos = old_section.indexOf(point);
 
-			if(pos < 0)
-				return;
-
+			if(pos < 0) return;
 			old_section.splice(pos, 1);
 
 			let new_section = this.get_section(point.x, point.y);
@@ -211,11 +207,11 @@
 		},
 
 		get_column: function(x) {
-			return Math.floor(x * this.columns / this.width);
+			return Math.floor((x - this.viewport.x) * this.columns / this.viewport.width);
 		},
 
 		get_row: function(y) {
-			return Math.floor(y * this.rows / this.height);
+			return Math.floor((y - this.viewport.y) * this.rows / this.viewport.height);
 		},
 
 		visible_points: function(point, radius) {
@@ -239,6 +235,13 @@
 		}
 	}
 
+	function Viewport(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
 	function Petri(canvas, params) {
 		this._init(canvas, params);
 	}
@@ -247,31 +250,33 @@
 		_init: function(canvas, params) {
 			this.canvas = canvas;
 			this.context = canvas.getContext('2d');
-			this.width = canvas.width;
-			this.height = canvas.height;
+			this.viewport = new Viewport(
+				-MAX_DISTANCE_UNION, -MAX_DISTANCE_UNION,
+				canvas.width + 2 * MAX_DISTANCE_UNION,
+				canvas.height + 2 * MAX_DISTANCE_UNION);
 
 			this.run = false;
 			this._on_stop_callbacks = [];
 
 			if(params.dot_density) {
-				this.n_points = this.width * this.height * params.dot_density / 1000;
+				this.n_points = this.viewport.width * this.viewport.height * params.dot_density / 1000;
 			} else if(params.n_points) {
 				this.n_points = params.n_points;
 			} else {
-				this.n_points = this.width * this.height * 0.25 / 1000;
+				this.n_points = this.viewport.width * this.viewport.height * 0.25 / 1000;
 			}
 			this.n_points = Math.floor(this.n_points);
 
 			this.points = new Array(this.n_points);
-			this.surface = new Grid(this.width, this.height);
+			this.surface = new Grid(this.viewport);
 
 			for(let i = 0; i < this.n_points; ++i) {
-				this.points[i] = new RandomDot(this.canvas);
+				this.points[i] = new RandomDot(this.canvas, this.viewport);
 				this.surface.insert(this.points[i]);
 			}
 
 			if(params.with_cursor)
-				this.points[0] = new CursorDot(this.canvas);
+				this.points[0] = new CursorDot(this.canvas, this.viewport);
 		},
 
 		_update_graph: function () {
@@ -339,27 +344,26 @@
 		},
 
 		draw: function() {
-			var point;
-
-			this.context.clearRect(0 , 0, this.width, this.height);
+			this.context.clearRect(0 , 0, this.canvas.width, this.canvas.height);
 			for(let i = 0; i < this.points.length; ++i) {
-				point = this.points[i];
-				point.draw();
+				this.points[i].draw();
 			}
 		},
 
 		resize: function(width, height) {
 			let was_running = this.run;
 
-			let width_proportion = width / this.width;
-			let height_proportion = height / this.height;
+			let width_proportion = (width - 2 * this.viewport.x) / this.viewport.width;
+			let height_proportion = (height - 2 * this.viewport.y) / this.viewport.height;
 
 			this.stop(() => {
-				this.surface.width = this.width = this.canvas.width = width;
-				this.surface.height = this.height = this.canvas.height = height;
-				this.points.forEach(function(point) {
-					point.x = point.x * width_proportion;
-					point.y = point.y * height_proportion;
+				this.canvas.width = width;
+				this.canvas.height = height;
+				this.viewport.width = width - 2 * this.viewport.x;
+				this.viewport.height = height - 2 * this.viewport.y;
+				this.points.forEach(point => {
+					point.x = (point.x - this.viewport.x) * width_proportion + this.viewport.x;
+					point.y = (point.y - this.viewport.y) * height_proportion + this.viewport.y;
 				});
 
 				if(was_running)
