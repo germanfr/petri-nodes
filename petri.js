@@ -255,6 +255,7 @@
 				canvas.width + 2 * MAX_DISTANCE_UNION,
 				canvas.height + 2 * MAX_DISTANCE_UNION);
 
+			this.resizing = false;
 			this.run = false;
 			this._on_stop_callbacks = [];
 
@@ -351,6 +352,9 @@
 		},
 
 		resize: function(width, height) {
+			if(this.resizing) return;
+			this.resizing = true;
+
 			let was_running = this.run;
 
 			let width_proportion = (width - 2 * this.viewport.x) / this.viewport.width;
@@ -368,6 +372,7 @@
 
 				if(was_running)
 					this.start();
+				this.resizing = false;
 			});
 		}
 
